@@ -59,3 +59,5 @@ Update the IP in `index.html`
 ```
 npx serve -l tcp://0.0.0.0:3000
 ```
+
+Go to `<your-ip>:3000` on your other device
