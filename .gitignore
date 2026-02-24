@@ -4,4 +4,4 @@ output.css
 package-lock.json
 BareZork.apk
 .DS_Store
-build
+out

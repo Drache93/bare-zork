@@ -27,19 +27,19 @@ npm run build:all
 ### MacOS
 
 ```
-open ./build/darwin-arm64/bare-zork.app
+open ./out/darwin-arm64/bare-zork.app
 ```
 
 ### iOS
 
 ```
-xcrun simctl install booted ./build/ios-arm64-simulator/bare-zork.app
+xcrun simctl install booted ./out/ios-arm64-simulator/bare-zork.app
 ```
 
 ### Android
 
 ```
-adb -e install build/android-arm64/BareZork.apk
+adb -e install out/android-arm64/BareZork.apk
 ```
 
 Linux and Windows supported but not tested
@@ -52,7 +52,7 @@ Update the IP in `index.html`
 
 * Run Zork:
 ```
-./build/darwin-arm64/bare-zork.app --headless --host 0.0.0.0
+./out/darwin-arm64/bare-zork.app --headless --host 0.0.0.0
 ```
 
 * Serve HTML

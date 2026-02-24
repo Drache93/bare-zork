@@ -4,23 +4,23 @@
   "description": "",
   "main": "index.js",
   "imports": {
-    "#config": {
-      "android": "./config/android.js",
-      "ios": "./config/ios.js",
-      "default": "./config/default.js"
+    "#target": {
+      "android": "./target/android.js",
+      "ios": "./target/ios.js",
+      "default": "./target/default.js"
     }
   },
   "scripts": {
     "format": "prettier . --write",
     "test": "prettier . --check && lunte",
     "postinstall": "patch-package",
-    "dev": "npm run clean && npm run build:css && npm run build && ./build/darwin-arm64/bare-zork.app/Contents/MacOS/bare-zork",
-    "clean": "rm -rf build",
+    "dev": "npm run clean && npm run build:css && npm run build && ./out/darwin-arm64/bare-zork.app/Contents/MacOS/bare-zork",
+    "clean": "rm -rf out",
     "build:all": "npm run build:css && npm run clean && npm run build && npm run build:android && npm run build:ios && npm run build:ios-sim",
-    "build": "bare-build --out build/darwin-arm64 --host darwin-arm64 --icon icon.png --runtime bare-native/runtime app.js",
-    "build:android": "bare-build --out build/android-arm64 --host android-arm64 --resources resources/android --manifest manifest.xml --identifier io.zork.bare --name BareZork --runtime bare-native/runtime app.js",
-    "build:ios": "bare-build --out build/ios-arm64 --host ios-arm64 --icon icon.png --identifier io.zork.bare --runtime bare-native/runtime app.js",
-    "build:ios-sim": "bare-build --out build/ios-arm64-simulator --host ios-arm64-simulator --icon icon.png --identifier io.zork.bare --runtime bare-native/runtime app.js",
+    "build": "bare-build --out out/darwin-arm64 --host darwin-arm64 --icon icon.png --runtime bare-native/runtime app.js",
+    "build:android": "bare-build --out out/android-arm64 --host android-arm64 --resources build/android --manifest manifest.xml --identifier io.zork.bare --name BareZork --runtime bare-native/runtime app.js",
+    "build:ios": "bare-build --out out/ios-arm64 --host ios-arm64 --icon icon.png --identifier io.zork.bare --runtime bare-native/runtime app.js",
+    "build:ios-sim": "bare-build --out out/ios-arm64-simulator --host ios-arm64-simulator --icon icon.png --identifier io.zork.bare --runtime bare-native/runtime app.js",
     "build:css": "tailwindcss -i ./input.css -o ./output.css"
   },
   "keywords": [],

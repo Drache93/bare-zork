@@ -7,28 +7,28 @@ const { Transform } = require('streamx')
 const { Zork } = require('zork-machine')
 const Iambus = require('iambus')
 const { pipeline } = require('streamx')
-const config = require('#config')
+const target = require('#target')
 const { cellery } = require('./ui')
 
 const console = new Console()
 
-if (!config.headless) {
+if (!target.headless) {
   const window = new Window(800, 600)
   const webView = new WebView()
   window.content(webView)
 
   console.log('loading html')
-  webView.loadHTML(html(config))
+  webView.loadHTML(html(target))
   webView.inspectable(true)
 }
 
 let backend
 
-console.log('starting server on', config.host, config.port)
+console.log('starting server on', target.host, target.port)
 
-const wss = new ws.Server({ port: config.port, host: config.host }, async (socket) => {
+const wss = new ws.Server({ port: target.port, host: target.host }, async (socket) => {
   console.log('starting backend')
-  const store = new Corestore(config.storage || 'zork')
+  const store = new Corestore(target.storage || 'zork')
   const zork = Zork(store)
 
   // listen to renders and forward to websocket
