@@ -97,14 +97,13 @@ const welcome = new Message({
 })
 
 welcome.sub({ context: { gameOver: false } }, (cell, { context }) => {
-  const [location, ...rest] = context.output.split('\n')
+  const { location, text } = context.output
 
-  if (rest.length) {
-    cell.value = rest.join('\n')
+  if (location) {
     cell.prefix = location
-  } else {
-    cell.value = location
   }
+
+  cell.value = text
   cell.render({ id: 'messages', insert: 'beforeend', clear: true })
 })
 welcome.sub({ context: { gameOver: true, won: false } }, (cell) => {
@@ -114,6 +113,28 @@ welcome.sub({ context: { gameOver: true, won: false } }, (cell) => {
 welcome.sub({ context: { gameOver: true, won: true } }, (cell) => {
   cell.value = `You win!`
   cell.render({ id: 'messages', insert: 'beforeend', clear: true })
+})
+
+const warnings = new Container({
+  id: 'warnings',
+  padding: Spacing.all(0.5),
+  margin: Spacing.only({ top: 0.5 }),
+  color: Colours.Orange,
+  size: Size.S,
+  children: [],
+  alignment: Alignment.Vertical({}),
+  cellery
+})
+warnings.sub({ context: { gameOver: false } }, (cell, { context }) => {
+  const { warnings } = context.output
+
+  if (!warnings?.length) {
+    cell.destroy()
+    return
+  }
+
+  cell.children = warnings.map((value) => new Text({ value, cellery }))
+  cell.render({ id: 'messages', insert: 'afterend' })
 })
 
 module.exports = { cellery, Message, cmdInput, Colours }

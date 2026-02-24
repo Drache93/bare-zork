@@ -37,15 +37,14 @@
     "bare-web-kit": "v0.1.2",
     "bare-ws": "^2.0.4",
     "cellery": "^1.0.0",
-    "coremachine": "^1.0.4",
+    "coremachine": "^1.0.5",
     "corestore": "^7.8.0",
     "hyperstate": "github:Drache93/hyperstate",
     "iambus": "^2.0.6",
     "localdrive": "^2.2.0",
     "paparam": "^1.10.0",
     "streamx": "^2.23.0",
-    "zork-coremachine": "github:Drache93/zork-machine",
-    "zork-machine": "github:Drache93/zork-machine"
+    "zork-machine": "file:../zork-machine"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.18",
