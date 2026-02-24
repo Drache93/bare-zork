@@ -61,8 +61,6 @@ const wss = new ws.Server({ port: config.port, host: config.host }, async (socke
   )
 
   cellery.render()
-
-  // zork.write({ action: 'COMMAND', value: 'look' })
 })
 
 wss.on('close', () => {
