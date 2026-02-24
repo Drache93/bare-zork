@@ -98,8 +98,13 @@ const welcome = new Message({
 
 welcome.sub({ context: { gameOver: false } }, (cell, { context }) => {
   const [location, ...rest] = context.output.split('\n')
-  cell.value = rest.join('\n')
-  cell.prefix = location
+
+  if (rest.length) {
+    cell.value = rest.join('\n')
+    cell.prefix = location
+  } else {
+    cell.value = location
+  }
   cell.render({ id: 'messages', insert: 'beforeend', clear: true })
 })
 welcome.sub({ context: { gameOver: true, won: false } }, (cell) => {
