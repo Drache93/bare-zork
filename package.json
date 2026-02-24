@@ -36,7 +36,7 @@
     "bare-storage": "^1.0.1",
     "bare-web-kit": "v0.1.2",
     "bare-ws": "^2.0.4",
-    "cellery": "^1.0.0",
+    "cellery": "^1.0.1",
     "coremachine": "^1.0.5",
     "corestore": "^7.8.0",
     "hyperstate": "github:Drache93/hyperstate",

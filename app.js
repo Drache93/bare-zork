@@ -8,7 +8,7 @@ const { Zork } = require('zork-machine')
 const Iambus = require('iambus')
 const { pipeline } = require('streamx')
 const target = require('#target')
-const { cellery } = require('./ui')
+const { cellery } = require('./views/main')
 
 const console = new Console()
 

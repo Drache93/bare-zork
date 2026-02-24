@@ -1,48 +1,7 @@
-const {
-  Text,
-  App,
-  Container,
-  Cellery,
-  Input,
-  Spacing,
-  Color,
-  Alignment,
-  MultiCell,
-  Size,
-  Paragraph
-} = require('cellery')
-const { HTMLAdapter } = require('./adapter')
-
-class Message extends MultiCell {
-  constructor(opts = {}) {
-    super(opts)
-    this.value = opts.value
-    this.prefix = opts.prefix
-  }
-
-  _render() {
-    const children = [
-      new Text({
-        value: this.value
-      })
-    ]
-
-    if (this.prefix) {
-      children.unshift(
-        new Text({
-          value: `[${this.prefix}]`,
-          color: Colours.Blue,
-          margin: Spacing.only({ right: 0.5 })
-        })
-      )
-    }
-
-    return new Paragraph({
-      id: this.id,
-      children
-    })
-  }
-}
+const { Text, App, Container, Cellery, Input, Spacing, Color, Alignment, Size } = require('cellery')
+const { HTMLAdapter } = require('../adapters')
+const { Message } = require('../cells')
+const { Colours } = require('../styles')
 
 const cmdInput = new Input({
   id: 'cmd-input',
@@ -79,15 +38,6 @@ const app = new App({
 })
 
 const cellery = new Cellery(app, new HTMLAdapter())
-
-const Colours = {
-  Orange: Color.from('#fdc700'),
-  SoftBlue: Color.from('#51a2ff'),
-  Error: Color.from('#ff6467'),
-  Green: Color.from('#00c950'),
-  Cyan: Color.from('#00d3f2'),
-  Blue: Color.from('#1447e6')
-}
 
 // dynamically added stuff
 const welcome = new Message({
@@ -137,4 +87,4 @@ warnings.sub({ context: { gameOver: false } }, (cell, { context }) => {
   cell.render({ id: 'messages', insert: 'afterend' })
 })
 
-module.exports = { cellery, Message, cmdInput, Colours }
+module.exports = { cellery, cmdInput }

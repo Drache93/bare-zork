@@ -148,6 +148,4 @@ class HTMLAdapter {
   }
 }
 
-module.exports = {
-  HTMLAdapter
-}
+module.exports = HTMLAdapter
