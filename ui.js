@@ -71,7 +71,7 @@ const messages = new Container({
   scroll: Container.ScrollVertical,
   padding: Spacing.all(1),
   children: [new Text({ value: 'Welcome to Zork' })],
-  alignment: Alignment.Vertical({})
+  alignment: Alignment.Vertical({ items: 'center', justify: 'center' })
 })
 
 const app = new App({
