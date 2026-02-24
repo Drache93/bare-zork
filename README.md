@@ -2,6 +2,16 @@
 
 Zork everywhere
 
+Powered by [Bare Native](https://github.com/holepunchto/bare-native), demonstrating server side rendering.
+
+Data is streamed!
+* Rendering is handled via `Cellery render -> Transform -> Websocket`
+* Inputs are handled via `Websocket -> Transform -> State Machine -> Cellery`
+
+Streaming state machine takes actions and performs state changes.
+
+![demo](./demo.png)
+
 ## Build
 
 ```
