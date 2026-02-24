@@ -106,7 +106,7 @@ class HTMLAdapter {
     },
     Text: function (style) {
       // todo: fix safety
-      return html`<span id="${this.id}" style="${style};word-break: break-all;"
+      return html`<span id="${this.id}" style="${style}"
         >${this.value.toString().replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</span
       >`
     },
