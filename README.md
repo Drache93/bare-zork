@@ -2,7 +2,7 @@
 
 Zork everywhere
 
-Powered by [Bare Native](https://github.com/holepunchto/bare-native), demonstrating server side rendering.
+Powered by [Bare Native](https://github.com/holepunchto/bare-native), demonstrating "server" side rendering from the main Bare process rendering a Window and WebView cross platform.
 
 Data is streamed!
 * Rendering is handled via `Cellery render -> Transform -> Websocket`
