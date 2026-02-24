@@ -24,7 +24,7 @@ if (!config.headless) {
 
 let backend
 
-console.log('starting server')
+console.log('starting server on', config.host, config.port)
 
 const wss = new ws.Server({ port: config.port, host: config.host }, async (socket) => {
   console.log('starting backend')

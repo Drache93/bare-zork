@@ -43,3 +43,19 @@ adb -e install build/android-arm64/BareZork.apk
 ```
 
 Linux and Windows supported but not tested
+
+## Headless
+
+To run headless and access remotely, run on `0.0.0.0`
+
+Update the IP in `index.html`
+
+* Run Zork:
+```
+./build/darwin-arm64/bare-zork.app --headless --host 0.0.0.0
+```
+
+* Serve HTML
+```
+npx serve -l tcp://0.0.0.0:3000
+```
