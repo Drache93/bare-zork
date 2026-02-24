@@ -44,7 +44,7 @@
     "localdrive": "^2.2.0",
     "paparam": "^1.10.0",
     "streamx": "^2.23.0",
-    "zork-machine": "^1.0.2"
+    "zork-machine": "^1.0.3"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.18",
