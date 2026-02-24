@@ -36,7 +36,7 @@ open ./build/darwin-arm64/bare-zork.app
 xcrun simctl install booted ./build/ios-arm64-simulator/bare-zork.app
 ```
 
-### Adnroid
+### Android
 
 ```
 adb -e install build/android-arm64/BareZork.apk
