@@ -8,6 +8,10 @@ Data is streamed!
 * Rendering is handled via `Cellery render -> Transform -> Websocket`
 * Inputs are handled via `Websocket -> Transform -> State Machine -> Cellery`
 
+* [Coremachine](https://www.npmjs.com/package/coremachine)
+* [Cellery](https://www.npmjs.com/package/cellery)
+* [Zork Machine](https://www.npmjs.com/package/zork-machine)
+
 Streaming state machine takes actions and performs state changes.
 
 ![demo](./demo.png)
