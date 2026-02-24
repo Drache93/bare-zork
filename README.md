@@ -61,3 +61,10 @@ npx serve -l tcp://0.0.0.0:3000
 ```
 
 Go to `<your-ip>:3000` on your other device
+
+## License
+
+MIT
+
+Game content inspired by Zork I: The Great Underground Empire by Infocom (1980).
+ZORK is a registered trademark of Infocom, Inc.
