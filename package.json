@@ -1,0 +1,59 @@
+{
+  "name": "bare-zork",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "imports": {
+    "#config": {
+      "android": "./config/android.js",
+      "ios": "./config/ios.js",
+      "default": "./config/default.js"
+    }
+  },
+  "scripts": {
+    "format": "prettier . --write",
+    "test": "prettier . --check && lunte",
+    "postinstall": "patch-package",
+    "dev": "npm run clean && npm run build:css && npm run build && ./build/darwin-arm64/bare-zork.app/Contents/MacOS/bare-zork",
+    "clean": "rm -rf build",
+    "build:all": "npm run build:css && npm run clean && npm run build && npm run build:android && npm run build:ios",
+    "build": "bare-build --out build/darwin-arm64 --host darwin-arm64 --icon icon.jpg --runtime bare-native/runtime app.js",
+    "build:android": "bare-build --out build/android-arm64 --host android-arm64 --resources resources/android --manifest manifest.xml --identifier io.zork.bare --name BareZork --runtime bare-native/runtime app.js",
+    "build:ios": "bare-build --out build/ios-arm64 --host ios-arm64 --icon icon.jpg --identifier io.zork.bare --runtime bare-native/runtime app.js",
+    "build:ios-sim": "bare-build --out build/ios-arm64-simulator --host ios-arm64-simulator --icon icon.jpg --identifier io.zork.bare --runtime bare-native/runtime app.js",
+    "build:css": "tailwindcss -i ./input.css -o ./output.css"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bare-console": "^6.1.0",
+    "bare-events": "^2.8.2",
+    "bare-fs": "^4.5.3",
+    "bare-native": "^0.1.2",
+    "bare-path": "^3.0.0",
+    "bare-storage": "^1.0.1",
+    "bare-web-kit": "v0.1.2",
+    "bare-ws": "^2.0.4",
+    "cellery": "^1.0.0",
+    "coremachine": "^1.0.3",
+    "corestore": "^7.8.0",
+    "hyperstate": "github:Drache93/hyperstate",
+    "iambus": "^2.0.6",
+    "localdrive": "^2.2.0",
+    "paparam": "^1.10.0",
+    "streamx": "^2.23.0",
+    "zork-coremachine": "github:Drache93/zork-machine",
+    "zork-machine": "github:Drache93/zork-machine"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "bare-build": "^0.4.3",
+    "lunte": "^1.5.0",
+    "patch-package": "^8.0.1",
+    "prettier": "^3.8.1",
+    "prettier-config-holepunch": "^2.0.0",
+    "tailwindcss": "^4.1.18"
+  }
+}

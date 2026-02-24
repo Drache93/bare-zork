@@ -1,0 +1,75 @@
+diff --git a/node_modules/compromise/package.json b/node_modules/compromise/package.json
+index 637dbcc..85f1a5f 100644
+--- a/node_modules/compromise/package.json
++++ b/node_modules/compromise/package.json
+@@ -9,6 +9,12 @@
+   "type": "module",
+   "sideEffects": false,
+   "types": "./types/three.d.ts",
++  "imports": {
++    "process": {
++      "bare": "bare-process",
++      "default": "process"
++    }
++  },
+   "exports": {
+     ".": {
+       "import": {
+diff --git a/node_modules/compromise/src/1-one/sweep/methods/tagger/index.js b/node_modules/compromise/src/1-one/sweep/methods/tagger/index.js
+index 7865069..02511a1 100644
+--- a/node_modules/compromise/src/1-one/sweep/methods/tagger/index.js
++++ b/node_modules/compromise/src/1-one/sweep/methods/tagger/index.js
+@@ -1,4 +1,5 @@
+ import canBe from './canBe.js'
++import process from 'process'
+ 
+ const tagger = function (list, document, world) {
+   const { model, methods } = world
+diff --git a/node_modules/compromise/src/1-one/tag/methods/setTag.js b/node_modules/compromise/src/1-one/tag/methods/setTag.js
+index 5d9a801..a42be96 100644
+--- a/node_modules/compromise/src/1-one/tag/methods/setTag.js
++++ b/node_modules/compromise/src/1-one/tag/methods/setTag.js
+@@ -1,3 +1,4 @@
++import process from 'process'
+ const isMulti = / /
+ 
+ const addChunk = function (term, tag) {
+diff --git a/node_modules/compromise/src/2-two/preTagger/compute/tagger/3rd-pass/06-switches.js b/node_modules/compromise/src/2-two/preTagger/compute/tagger/3rd-pass/06-switches.js
+index a5f9713..47ca1bc 100644
+--- a/node_modules/compromise/src/2-two/preTagger/compute/tagger/3rd-pass/06-switches.js
++++ b/node_modules/compromise/src/2-two/preTagger/compute/tagger/3rd-pass/06-switches.js
+@@ -1,4 +1,5 @@
+ /* eslint-disable no-console */
++import process from 'process'
+ import fillTags from './_fillTags.js'
+ const env = typeof process === 'undefined' || !process.env ? self.env || {} : process.env
+ import adhoc from './_adhoc.js'
+diff --git a/node_modules/compromise/src/2-two/preTagger/compute/tagger/_fastTag.js b/node_modules/compromise/src/2-two/preTagger/compute/tagger/_fastTag.js
+index b5fdc35..a6cb939 100644
+--- a/node_modules/compromise/src/2-two/preTagger/compute/tagger/_fastTag.js
++++ b/node_modules/compromise/src/2-two/preTagger/compute/tagger/_fastTag.js
+@@ -1,3 +1,4 @@
++import process from 'process'
+ // verbose-mode tagger debuging
+ const log = (term, tag, reason = '') => {
+   const yellow = str => '\x1b[33m\x1b[3m' + str + '\x1b[0m'
+diff --git a/node_modules/compromise/src/3-three/chunker/compute/04-fallback.js b/node_modules/compromise/src/3-three/chunker/compute/04-fallback.js
+index 5ce7fd6..2f10e77 100644
+--- a/node_modules/compromise/src/3-three/chunker/compute/04-fallback.js
++++ b/node_modules/compromise/src/3-three/chunker/compute/04-fallback.js
+@@ -1,3 +1,5 @@
++import process from 'process'
++
+ const setChunk = function (term, chunk) {
+   const env = typeof process === 'undefined' || !process.env ? self.env || {} : process.env
+   if (env.DEBUG_CHUNKS) {
+diff --git a/node_modules/compromise/src/API/_lib.js b/node_modules/compromise/src/API/_lib.js
+index 9e1953e..f985026 100644
+--- a/node_modules/compromise/src/API/_lib.js
++++ b/node_modules/compromise/src/API/_lib.js
+@@ -1,4 +1,4 @@
+-
++import process from 'process'
+ /** log the decision-making to console */
+ const verbose = function (set) {
+   const env = typeof process === 'undefined' || !process.env ? self.env || {} : process.env //use window, in browser
