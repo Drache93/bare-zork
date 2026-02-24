@@ -103,7 +103,7 @@ welcome.sub({ context: { gameOver: false } }, (cell, { context }) => {
     cell.prefix = location
   }
 
-  cell.value = text
+  cell.value = text.replaceAll('\n', '<br>')
   cell.render({ id: 'messages', insert: 'beforeend', clear: true })
 })
 welcome.sub({ context: { gameOver: true, won: false } }, (cell) => {

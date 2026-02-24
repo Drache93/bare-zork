@@ -106,9 +106,7 @@ class HTMLAdapter {
     },
     Text: function (style) {
       // todo: fix safety
-      return html`<span id="${this.id}" style="${style}"
-        >${this.value.toString().replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</span
-      >`
+      return html`<span id="${this.id}" style="${style};">${this.value.toString()}</span>`
     },
     Input: function () {
       // TODO: options
