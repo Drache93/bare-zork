@@ -2,7 +2,7 @@ const css = require('./output.css', { with: { type: 'text' } })
 
 const html = String.raw
 
-module.exports = ({ port, isAndroid, isIOS }) =>
+module.exports = ({ port, token, isAndroid, isIOS }) =>
   html`<!doctype html>
     <html lang="en">
       <head>
@@ -23,7 +23,7 @@ module.exports = ({ port, isAndroid, isIOS }) =>
               : 'h-screen'}"
         ></main>
         <script>
-          const socket = new WebSocket('ws://localhost:${port}')
+          const socket = new WebSocket('ws://localhost:${port}?token=${token}')
 
           socket.onmessage = (msg) => {
             const { id, content, insert, value, clear, destroy } = JSON.parse(msg.data)
@@ -64,7 +64,7 @@ module.exports = ({ port, isAndroid, isIOS }) =>
           document.addEventListener('keydown', (e) => {
             // TODO: register for events
             if (!supportedKeys.includes(e.key)) return
-            if (!e.shitKey) e.preventDefault()
+            if (!e.shiftKey) e.preventDefault()
 
             socket.send(
               JSON.stringify({

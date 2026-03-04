@@ -8,4 +8,4 @@ if (!fs.existsSync(storage)) {
   fs.mkdirSync(storage, { recursive: true })
 }
 
-module.exports = { storage, port: 8080, isIOS: true }
+module.exports = { storage, port: 0, isIOS: true }

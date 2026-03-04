@@ -14,7 +14,7 @@ const cmd = command(
 cmd.parse(process.argv.slice(1))
 
 const storage = cmd.flags.storage || path.join(dir.persistent(), '.BareZork')
-const port = cmd.flags.port || 8080
+const port = cmd.flags.port || 0
 const host = cmd.flags.host
 const headless = !!cmd.flags.headless
 

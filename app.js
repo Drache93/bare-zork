@@ -1,6 +1,7 @@
 const { Window, WebView } = require('bare-native')
 const html = require('./view.html')
 const ws = require('bare-ws')
+const http = require('bare-http1')
 const Console = require('bare-console')
 const Corestore = require('corestore')
 const { Transform } = require('streamx')
@@ -12,26 +13,24 @@ const { cellery } = require('./views/main')
 
 const console = new Console()
 
-if (!target.headless) {
-  const window = new Window(800, 600)
-  const webView = new WebView()
-  window.content(webView)
+const token = require('bare-crypto').randomBytes(32).toString('hex')
 
-  console.log('loading html')
-  webView.loadHTML(html(target))
-  webView.inspectable(true)
-}
+const server = http.createServer()
 
-let backend
+const wss = new ws.Server({ server }, async (socket, req) => {
+  const url = new URL(req.url, 'http://localhost')
+  const incoming = url.searchParams.get('token')
 
-console.log('starting server on', target.host, target.port)
+  if (incoming !== token) {
+    console.log('rejected connection: invalid token')
+    socket.destroy()
+    return
+  }
 
-const wss = new ws.Server({ port: target.port, host: target.host }, async (socket) => {
-  console.log('starting backend')
+  console.log('authenticated client connected')
   const store = new Corestore(target.storage || 'zork')
   const zork = Zork(store)
 
-  // listen to renders and forward to websocket
   pipeline(
     cellery.sub({ event: 'render' }),
     new Transform({
@@ -40,10 +39,6 @@ const wss = new ws.Server({ port: target.port, host: target.host }, async (socke
         cb()
       }
     }),
-    socket
-  )
-
-  pipeline(
     socket,
     new Transform({
       transform(msg, cb) {
@@ -61,6 +56,21 @@ const wss = new ws.Server({ port: target.port, host: target.host }, async (socke
   )
 
   cellery.render()
+})
+
+server.listen(0, target.host, () => {
+  const port = server.address().port
+  console.log('ws listening on', target.host, port)
+
+  if (!target.headless) {
+    const window = new Window(800, 600)
+    const webView = new WebView()
+    window.content(webView)
+
+    console.log('loading html')
+    webView.loadHTML(html({ ...target, port, token }))
+    webView.inspectable(true)
+  }
 })
 
 wss.on('close', () => {
