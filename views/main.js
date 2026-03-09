@@ -1,47 +1,78 @@
-const { Text, App, Container, Cellery, Input, Spacing, Color, Alignment, Size } = require('cellery')
+const {
+  Text,
+  App,
+  Container,
+  Cellery,
+  Input,
+  Spacing,
+  Color,
+  Alignment,
+  Size,
+  Cell
+} = require('cellery')
 const { HTMLAdapter } = require('../adapters')
 const { Message, Button } = require('../cells')
 const { Colours } = require('../styles')
 
 // --- menu view ---
 
-const menu = new Container({
-  id: 'menu',
-  flex: Container.FlexAuto,
-  alignment: Alignment.Vertical({ items: 'center', justify: 'center' }),
-  children: [
-    new Text({
-      id: 'title',
-      value: 'ZORK',
-      size: Size.XL,
-      color: Color.from('#22c55e'),
-      margin: Spacing.only({ bottom: 2 })
-    }),
-    new Button({
-      id: 'btn-new',
-      value: 'New Game',
-      margin: Spacing.only({ bottom: 0.5 }),
-      onclick: true
-    }),
-    new Input({
-      id: 'cmd-input',
-      placeholder: 'join <key>',
-      alignment: Alignment.Horizontal({ items: 'center' })
+class Menu extends Cell {
+  constructor(showContinue) {
+    super()
+    this.showContinue = showContinue
+  }
+
+  _render() {
+    const children = [
+      new Text({
+        id: 'title',
+        value: 'ZORK',
+        size: Size.XL,
+        color: Color.from('#22c55e'),
+        margin: Spacing.only({ bottom: 2 })
+      }),
+      new Button({
+        id: 'btn-new',
+        value: 'New Game',
+        margin: Spacing.only({ bottom: 0.5 }),
+        onclick: true
+      })
+    ]
+
+    console.log('rendering', this.showContinue)
+    if (this.showContinue) {
+      children.push(
+        new Button({
+          id: 'btn-continue',
+          value: 'Continue',
+          margin: Spacing.only({ bottom: 0.5 }),
+          onclick: true
+        })
+      )
+    }
+
+    children.push(
+      new Input({
+        id: 'cmd-input',
+        placeholder: 'join <key>',
+        alignment: Alignment.Horizontal({ items: 'center' })
+      })
+    )
+
+    return new Container({
+      id: 'menu',
+      flex: Container.FlexAuto,
+      alignment: Alignment.Vertical({ items: 'center', justify: 'center' }),
+      children
     })
-  ]
-})
+  }
+}
+
+const menu = new Menu()
 
 const menuApp = new App({ children: [menu] })
 
 const cellery = new Cellery(menuApp, new HTMLAdapter())
-
-// todo render
-const continueGame = new Button({
-  id: 'btn-continue',
-  value: 'Continue',
-  margin: Spacing.only({ bottom: 0.5 }),
-  onclick: true
-})
 
 // --- game view ---
 
@@ -131,4 +162,4 @@ warnings.sub({ context: { gameOver: false } }, (cell, { context }) => {
   cell.render({ id: 'messages', insert: 'afterend' })
 })
 
-module.exports = { cellery, menuApp, gameApp, cmdInput }
+module.exports = { cellery, menuApp, gameApp, menu, cmdInput }

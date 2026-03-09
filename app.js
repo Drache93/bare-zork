@@ -12,7 +12,7 @@ const b4a = require('b4a')
 
 const target = require('#target')
 const html = require('./view.html')
-const { cellery, menuApp, gameApp } = require('./views/main')
+const { cellery, menuApp, gameApp, menu } = require('./views/main')
 const { Status } = require('./cells')
 
 const console = new Console()
@@ -103,6 +103,11 @@ class AppMachine extends Transform {
         default:
           cellery.app = menuApp
           cellery.render()
+
+          if (context.sessions.length) {
+            menu.showContinue = true
+            menu.render()
+          }
           break
       }
     })
@@ -111,6 +116,7 @@ class AppMachine extends Transform {
     // default to menu — eager will override if resuming
     cellery.app = menuApp
     cellery.render()
+
     cb()
   }
 
@@ -130,12 +136,9 @@ class AppMachine extends Transform {
 
       if (event.error) {
         console.error('session error', event.error)
-        // todo render
         cb()
         return
       }
-
-      console.log('multiplayer?', this._session, event)
 
       if (isAction(event) && event.data.value.trim() === 'multiplayer') {
         this._startMultiplayer()
@@ -195,7 +198,6 @@ class AppMachine extends Transform {
     const sink = new Writable({
       write(data, cb) {
         self.push(data)
-        // fan out to multiplayer peers if active
         if (self._multiplayer) self._multiplayer.broadcast(data)
         cb()
       }
@@ -235,41 +237,46 @@ class AppMachine extends Transform {
     const dht = new DHT()
     const keyPair = DHT.keyPair()
     const peers = new Set()
-    const peerPipelines = []
+
+    const status = new Status({
+      id: 'multiplayer',
+      value: 'Starting multiplayer...'
+    })
+    status.render({ id: 'messages', insert: 'afterend' })
 
     const dhtServer = dht.createServer((conn) => {
       console.log('remote player connected')
       peers.add(conn)
 
-      const pp = pipeline(
-        conn,
-        new Transform({
-          transform(data, cb) {
-            try {
-              this.push(JSON.parse(data.toString('utf-8')))
-            } catch {}
-            cb()
-          }
-        }),
-        zork
-      )
+      // peer commands → zork (manual write, not pipeline — so peer
+      // disconnect doesn't destroy zork)
+      conn.on('data', (data) => {
+        try {
+          const cmd = JSON.parse(data.toString('utf-8'))
+          zork.write(cmd)
+        } catch {}
+      })
 
-      peerPipelines.push(pp)
-      conn.on('close', () => peers.delete(conn))
-      conn.on('error', () => peers.delete(conn))
-    })
+      conn.on('close', () => {
+        peers.delete(conn)
+        status.value = 'Hosting (' + peers.size + ' connected)'
+        status.render()
+      })
 
-    const status = new Status({
-      id: 'multiplayer',
-      value: 'Staring multiplayer...'
+      conn.on('error', () => {
+        peers.delete(conn)
+      })
+
+      // status.value = 'Hosting (' + peers.size + ' connected)'
+      // status.render()
+
+      // send current game state to newly joined peer
+      cellery.render()
     })
-    status.render({ id: 'messages', insert: 'afterend' })
 
     dhtServer.listen(keyPair).then(() => {
       const key = b4a.toString(keyPair.publicKey, 'hex')
       console.log('hosting on:', key)
-      // TODO: render host key via cellery cell
-
       status.value = 'Hosting on ' + key
       status.render()
     })
@@ -280,10 +287,10 @@ class AppMachine extends Transform {
         for (const peer of peers) peer.write(msg)
       },
       destroy() {
-        for (const pp of peerPipelines) pp.destroy()
         for (const peer of peers) peer.destroy()
         dhtServer.close()
         dht.destroy()
+        status.destroy()
       }
     }
   }
@@ -291,11 +298,14 @@ class AppMachine extends Transform {
   // --- join session ---
 
   _createJoinSession(key) {
-    console.log('joining', key)
-
     const self = this
     const dht = new DHT()
     const conn = dht.connect(b4a.from(key, 'hex'))
+
+    const status = new Status({
+      id: 'multiplayer',
+      value: 'Connecting...'
+    })
 
     const sink = new Writable({
       write(data, cb) {
@@ -317,6 +327,22 @@ class AppMachine extends Transform {
 
     const pipe = pipeline(input, conn, sink)
 
+    conn.on('open', () => {
+      console.log('connected to host')
+      status.value = 'Connected to game'
+      status.render()
+    })
+
+    conn.on('error', (err) => {
+      console.log('join error:', err)
+      status.value = 'Connection failed'
+      status.render()
+    })
+
+    // show connecting status immediately
+    cellery.render()
+    status.render({ id: 'messages', insert: 'afterend' })
+
     return {
       write(event, cb) {
         input.write(event, cb)
@@ -325,6 +351,7 @@ class AppMachine extends Transform {
         input.destroy()
         pipe.destroy()
         dht.destroy()
+        status.destroy()
       }
     }
   }
