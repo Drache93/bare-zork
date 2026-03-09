@@ -128,14 +128,14 @@ class AppMachine extends Transform {
     }
 
     if (this._session) {
-      if (isAction(event) && event.data.value.trim() === 'quit') {
-        this._transition('QUIT')
+      if (event.error) {
+        console.error('session error', event)
         cb()
         return
       }
 
-      if (event.error) {
-        console.error('session error', event.error)
+      if (isAction(event) && event.data.value.trim() === 'quit') {
+        this._transition('QUIT')
         cb()
         return
       }
@@ -195,35 +195,34 @@ class AppMachine extends Transform {
     const zork = Zork(ns)
     const self = this
 
-    const sink = new Writable({
-      write(data, cb) {
-        self.push(data)
-        if (self._multiplayer) self._multiplayer.broadcast(data)
-        cb()
-      }
-    })
+    // isolate zork from pipeline — errors on unrecognised commands
+    // would destroy the entire pipeline chain otherwise
+    function onData(data) {
+      self.push(data)
+      if (self._multiplayer) self._multiplayer.broadcast(data)
+    }
 
-    const input = new Transform({
-      transform(event, cb) {
-        if (isAction(event)) {
-          this.push({ action: 'COMMAND', value: event.data.value })
-        }
-        cb()
-      }
-    })
+    function onError(err) {
+      console.error('zork error:', err)
+    }
 
-    const pipe = pipeline(input, zork, sink)
+    zork.on('data', onData)
+    zork.on('error', onError)
 
     cellery.render()
 
     return {
       zork,
       write(event, cb) {
-        input.write(event, cb)
+        if (isAction(event)) {
+          zork.write({ action: 'COMMAND', value: event.data.value })
+        }
+        cb()
       },
       destroy() {
-        input.destroy()
-        pipe.destroy()
+        zork.removeListener('data', onData)
+        zork.removeListener('error', onError)
+        zork.destroy()
       }
     }
   }
@@ -307,29 +306,21 @@ class AppMachine extends Transform {
       value: 'Connecting...'
     })
 
-    const sink = new Writable({
-      write(data, cb) {
-        try {
-          self.push(JSON.parse(data.toString('utf-8')))
-        } catch {}
-        cb()
-      }
+    // isolate conn — host disconnect shouldn't silently kill session
+    conn.on('data', (data) => {
+      try {
+        self.push(JSON.parse(data.toString('utf-8')))
+      } catch {}
     })
-
-    const input = new Transform({
-      transform(event, cb) {
-        if (isAction(event)) {
-          this.push(JSON.stringify({ action: 'COMMAND', value: event.data.value }))
-        }
-        cb()
-      }
-    })
-
-    const pipe = pipeline(input, conn, sink)
 
     conn.on('open', () => {
       console.log('connected to host')
       status.value = 'Connected to game'
+      status.render()
+    })
+
+    conn.on('close', () => {
+      status.value = 'Disconnected from host'
       status.render()
     })
 
@@ -345,11 +336,13 @@ class AppMachine extends Transform {
 
     return {
       write(event, cb) {
-        input.write(event, cb)
+        if (isAction(event)) {
+          conn.write(JSON.stringify({ action: 'COMMAND', value: event.data.value }))
+        }
+        cb()
       },
       destroy() {
-        input.destroy()
-        pipe.destroy()
+        conn.destroy()
         dht.destroy()
         status.destroy()
       }

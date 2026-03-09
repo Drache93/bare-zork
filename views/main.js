@@ -39,7 +39,6 @@ class Menu extends Cell {
       })
     ]
 
-    console.log('rendering', this.showContinue)
     if (this.showContinue) {
       children.push(
         new Button({
@@ -111,7 +110,17 @@ const messages = new Container({
   alignment: Alignment.Vertical({ justify: 'center' })
 })
 
-const gameApp = new App({ children: [messages, cmd] })
+const warnings = new Container({
+  id: 'warnings',
+  padding: Spacing.all(0.5),
+  margin: Spacing.only({ top: 0.5 }),
+  color: Colours.Orange,
+  size: Size.S,
+  children: [],
+  alignment: Alignment.Vertical({})
+})
+
+const gameApp = new App({ children: [messages, warnings, cmd] })
 
 // --- dynamic subscriptions ---
 
@@ -138,28 +147,18 @@ welcome.sub({ context: { gameOver: true, won: true } }, (cell) => {
   cell.render({ id: 'messages', insert: 'beforeend', clear: true })
 })
 
-const warnings = new Container({
-  id: 'warnings',
-  padding: Spacing.all(0.5),
-  margin: Spacing.only({ top: 0.5 }),
-  color: Colours.Orange,
-  size: Size.S,
-  children: [],
-  alignment: Alignment.Vertical({})
-})
 warnings.sub({ context: { gameOver: false } }, (cell, { context }) => {
   if (!context.output) return
 
   const { warnings } = context.output
 
   if (!warnings?.length) {
-    cell.destroy()
     return
   }
 
   console.log('warnings!', warnings)
   cell.children = warnings.map((value) => new Text({ value, cellery }))
-  cell.render({ id: 'messages', insert: 'afterend' })
+  cell.render()
 })
 
 module.exports = { cellery, menuApp, gameApp, menu, cmdInput }
