@@ -183,8 +183,8 @@ class AppMachine extends Transform {
     } else if (isClick(event, 'btn-continue')) {
       if (!this._cm.context.sessions.length) return
       this._transition('CONTINUE')
-    } else if (isAction(event) && event.data.value.startsWith('join ')) {
-      this._transition('JOIN', event.data.value.slice(5).trim())
+    } else if (isJoin(event)) {
+      this._transition('JOIN', event.data.value.trim())
     }
   }
 
@@ -408,6 +408,13 @@ function isAction(event) {
   return Iambus.match(event, {
     event: 'keydown',
     data: { id: 'cmd-input', key: 'Enter', shift: false }
+  })
+}
+
+function isJoin(event) {
+  return Iambus.match(event, {
+    event: 'keydown',
+    data: { id: 'cmd-join', key: 'Enter', shift: false }
   })
 }
 

@@ -51,10 +51,15 @@ class Menu extends Cell {
     }
 
     children.push(
-      new Input({
-        id: 'cmd-input',
-        placeholder: 'join <key>',
-        alignment: Alignment.Horizontal({ items: 'center' })
+      new Container({
+        flex: Container.FlexAuto,
+        alignment: Alignment.Horizontal({ items: 'center' }),
+        children: [
+          new Input({
+            id: 'cmd-join',
+            placeholder: 'Enter key to join a game'
+          })
+        ]
       })
     )
 
