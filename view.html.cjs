@@ -61,6 +61,17 @@ module.exports = ({ port, token, isAndroid, isIOS }) =>
 
           const supportedKeys = ['Enter', 'ArrowUp', 'ArrowDown']
 
+          function onClick(target) {
+            socket.send(
+              JSON.stringify({
+                event: 'click',
+                data: {
+                  id: target.id
+                }
+              })
+            )
+          }
+
           document.addEventListener('keydown', (e) => {
             // TODO: register for events
             if (!supportedKeys.includes(e.key)) return

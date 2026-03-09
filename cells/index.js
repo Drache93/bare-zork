@@ -1,5 +1,9 @@
 const Message = require('./message')
+const Button = require('./button')
+const Status = require('./status')
 
 module.exports = {
-  Message
+  Message,
+  Button,
+  Status
 }

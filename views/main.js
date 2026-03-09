@@ -1,7 +1,49 @@
 const { Text, App, Container, Cellery, Input, Spacing, Color, Alignment, Size } = require('cellery')
 const { HTMLAdapter } = require('../adapters')
-const { Message } = require('../cells')
+const { Message, Button } = require('../cells')
 const { Colours } = require('../styles')
+
+// --- menu view ---
+
+const menu = new Container({
+  id: 'menu',
+  flex: Container.FlexAuto,
+  alignment: Alignment.Vertical({ items: 'center', justify: 'center' }),
+  children: [
+    new Text({
+      id: 'title',
+      value: 'ZORK',
+      size: Size.XL,
+      color: Color.from('#22c55e'),
+      margin: Spacing.only({ bottom: 2 })
+    }),
+    new Button({
+      id: 'btn-new',
+      value: 'New Game',
+      margin: Spacing.only({ bottom: 0.5 }),
+      onclick: true
+    }),
+    new Input({
+      id: 'cmd-input',
+      placeholder: 'join <key>',
+      alignment: Alignment.Horizontal({ items: 'center' })
+    })
+  ]
+})
+
+const menuApp = new App({ children: [menu] })
+
+const cellery = new Cellery(menuApp, new HTMLAdapter())
+
+// todo render
+const continueGame = new Button({
+  id: 'btn-continue',
+  value: 'Continue',
+  margin: Spacing.only({ bottom: 0.5 }),
+  onclick: true
+})
+
+// --- game view ---
 
 const cmdInput = new Input({
   id: 'cmd-input',
@@ -24,29 +66,29 @@ const cmd = new Container({
   ]
 })
 
+const welcome = new Message({
+  id: 'welcome',
+  value: 'Welcome to Zork'
+})
+
 const messages = new Container({
   id: 'messages',
   flex: Container.FlexAuto,
   scroll: Container.ScrollVertical,
   padding: Spacing.all(1),
-  children: [new Text({ value: 'Welcome to Zork' })],
+  children: [welcome],
   alignment: Alignment.Vertical({ justify: 'center' })
 })
 
-const app = new App({
-  children: [messages, cmd]
-})
+const gameApp = new App({ children: [messages, cmd] })
 
-const cellery = new Cellery(app, new HTMLAdapter())
-
-// dynamically added stuff
-const welcome = new Message({
-  id: 'welcome',
-  value: 'Welcome to Zork',
-  cellery
-})
+// --- dynamic subscriptions ---
 
 welcome.sub({ context: { gameOver: false } }, (cell, { context }) => {
+  if (!context.output) {
+    return
+  }
+
   const { location, text } = context.output
 
   if (location) {
@@ -57,11 +99,11 @@ welcome.sub({ context: { gameOver: false } }, (cell, { context }) => {
   cell.render({ id: 'messages', insert: 'beforeend', clear: true })
 })
 welcome.sub({ context: { gameOver: true, won: false } }, (cell) => {
-  cell.value = `Game over!`
+  cell.value = 'Game over!'
   cell.render({ id: 'messages', insert: 'beforeend', clear: true })
 })
 welcome.sub({ context: { gameOver: true, won: true } }, (cell) => {
-  cell.value = `You win!`
+  cell.value = 'You win!'
   cell.render({ id: 'messages', insert: 'beforeend', clear: true })
 })
 
@@ -72,10 +114,11 @@ const warnings = new Container({
   color: Colours.Orange,
   size: Size.S,
   children: [],
-  alignment: Alignment.Vertical({}),
-  cellery
+  alignment: Alignment.Vertical({})
 })
 warnings.sub({ context: { gameOver: false } }, (cell, { context }) => {
+  if (!context.output) return
+
   const { warnings } = context.output
 
   if (!warnings?.length) {
@@ -83,8 +126,9 @@ warnings.sub({ context: { gameOver: false } }, (cell, { context }) => {
     return
   }
 
+  console.log('warnings!', warnings)
   cell.children = warnings.map((value) => new Text({ value, cellery }))
   cell.render({ id: 'messages', insert: 'afterend' })
 })
 
-module.exports = { cellery, cmdInput }
+module.exports = { cellery, menuApp, gameApp, cmdInput }

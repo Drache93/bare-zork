@@ -106,7 +106,14 @@ class HTMLAdapter {
     },
     Text: function (style) {
       // todo: fix safety
-      return html`<span id="${this.id}" style="${style};">${this.value.toString()}</span>`
+      return html`<span
+        id="${this.id}"
+        style="${style};"
+        ${this.onclick
+          ? 'onclick="onClick(this)" class="cursor-pointer hover:text-green-500!"'
+          : ''}
+        >${this.value.toString()}</span
+      >`
     },
     Input: function () {
       // TODO: options
@@ -139,7 +146,10 @@ class HTMLAdapter {
 
     component.renderer = this
     const style = renderStyle(component)
-    const rendererFn = this.components[component.constructor.name]
+    const rendererFn = this.components[component.constructor.name || component.parent]
+    if (!rendererFn) {
+      throw new Error(`No renderer defined for ${component.constructor.name} component.`)
+    }
     return rendererFn.call(component, style)
   }
 
