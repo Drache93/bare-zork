@@ -266,11 +266,12 @@ class AppMachine extends Transform {
         peers.delete(conn)
       })
 
-      // status.value = 'Hosting (' + peers.size + ' connected)'
-      // status.render()
-
       // send current game state to newly joined peer
       cellery.render()
+
+      // cellery.render resets everything
+      status.value = 'Hosting (' + peers.size + ' connected)'
+      status.render({ id: 'messages', insert: 'afterend' })
     })
 
     dhtServer.listen(keyPair).then(() => {

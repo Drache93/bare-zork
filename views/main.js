@@ -57,7 +57,8 @@ class Menu extends Cell {
         children: [
           new Input({
             id: 'cmd-join',
-            placeholder: 'Enter key to join a game'
+            placeholder: 'Enter key to join a game',
+            multiline: true
           })
         ]
       })
